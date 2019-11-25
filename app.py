@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 
 @app.route('/api/flats/', methods=['GET'])
-def save():
+def get_flats():
     try:
         conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user,
                                 password=SETTINGS.password)
@@ -25,7 +25,7 @@ def save():
     return jsonify({'result': cur.fetchall()})
 
 @app.route('/api/closing/', methods=['POST'])
-def save():
+def closer():
     try:
         conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user,
                                 password=SETTINGS.password)
