@@ -20,7 +20,7 @@ def get_flats():
         print('fail connection')
         return jsonify({'result': False})
 
-    cur.execute("select id from flats where resource_id = 1 and closed = 'f';")
+    cur.execute("select offer_id from flats where resource_id = 1 and closed = 'f';")
 
     return jsonify({'result': cur.fetchall()})
 
