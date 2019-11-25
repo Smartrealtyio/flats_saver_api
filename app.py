@@ -36,6 +36,7 @@ def closer():
 
     offers = json.loads(request.json)
     for offer in offers:
+        cur.execute("select * from flats where offer_id = %s", (offer[0], ))
         cur.execute("update flats set closed = 't' where offer_id = %s", (offer[0], ))
 
     return jsonify({'result': True})
