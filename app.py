@@ -24,6 +24,7 @@ def get_flats():
 
     return jsonify({'result': cur.fetchall()})
 
+
 @app.route('/api/closing/', methods=['POST'])
 def closer():
     try:
@@ -36,9 +37,9 @@ def closer():
 
     offers = json.loads(request.json)
     for offer in offers:
-        cur.execute("select * from flats where offer_id = %s", (offer, ))
+        cur.execute("select * from flats where offer_id = %s", (offer,))
         print(cur.fetchall())
-        cur.execute("update flats set closed = 't', updated_at = %s where offer_id = %s;", (datetime.now() ,offer, ))
+        cur.execute("update flats set closed = 't', updated_at = %s where offer_id = %s;", (datetime.now(), offer,))
 
     conn.commit()
     cur.close()
@@ -55,7 +56,12 @@ def save():
         time = price[0].split(' ')[1]
 
         price[0] = datetime(int(date.split('-')[0]), int(date.split('-')[1]), int(date.split('-')[2]),
-                        int(time.split(':')[0]), int(time.split(':')[1]), int(time.split(':')[2][:2]))
+                            int(time.split(':')[0]), int(time.split(':')[1]), int(time.split(':')[2][:2]))
+
+    date = flat['created_at'].split(' ')[0]
+    time = flat['created_at'].split(' ')[1]
+    flat['created_at'] = datetime(int(date.split('-')[0]), int(date.split('-')[1]), int(date.split('-')[2]),
+                                  int(time.split(':')[0]), int(time.split(':')[1]), int(time.split(':')[2][:2]))
     try:
         conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user,
                                 password=SETTINGS.password)
@@ -108,15 +114,15 @@ def save():
             continue
 
     try:
-        #coords_response = requests.get(
+        # coords_response = requests.get(
         #    'https://geocode-maps.yandex.ru/1.x/?apikey={}&format=json&geocode={}'.format(SETTINGS.yand_api_token,
         #                                                                                  flat["address"]),
         #    timeout=5).text
-        #coords = \
+        # coords = \
         #    json.loads(coords_response)['response']['GeoObjectCollection']['featureMember'][0]['GeoObject'][
         #        'Point'][
         #        'pos']
-        #longitude, latitude = coords.split(' ')
+        # longitude, latitude = coords.split(' ')
         longitude = float(flat['longitude'])
         latitude = float(flat['latitude'])
     except IndexError:
@@ -182,7 +188,7 @@ def save():
                 flat['floor'],
                 flat['is_apartment'],
                 building_id,
-                datetime.now(),
+                flat['created_at'],
                 datetime.now(),
                 flat['offer_id'],
                 flat['closed'],
@@ -235,4 +241,3 @@ def save():
 
 if __name__ == '__main__':
     app.run()
-
