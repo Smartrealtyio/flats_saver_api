@@ -38,7 +38,10 @@ def closer():
     for offer in offers:
         cur.execute("select * from flats where offer_id = %s", (offer, ))
         print(cur.fetchall())
-        cur.execute("update flats set closed = 't' where offer_id = %s;", (offer, ))
+        cur.execute("update flats set closed = 't', updated_at = %s where offer_id = %s;", (datetime.now() ,offer, ))
+
+    conn.commit()
+    cur.close()
 
     return jsonify({'result': True})
 
