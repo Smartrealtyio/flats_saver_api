@@ -37,9 +37,12 @@ def closer():
 
     offers = json.loads(request.json)
     for offer in offers:
-        cur.execute("select * from flats where offer_id = %s", (offer,))
-        print(cur.fetchall())
+        # cur.execute("select * from flats where offer_id = %s", (offer,))
+        # print(cur.fetchall())
         cur.execute("update flats set closed = 't', updated_at = %s where offer_id = %s;", (datetime.now(), offer,))
+        cur.execute("select id from flats where offer_id = %s;", (offer,))
+        id = cur.fetchone()[0]
+        cur.execute("update prices set updated_at = %s where flat_id = %s;", (datetime.now(), id))
 
     conn.commit()
     cur.close()
