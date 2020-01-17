@@ -183,7 +183,7 @@ def save():
     is_offer_exist = cur.fetchone()
     if not is_offer_exist:
         cur.execute(
-            """insert into flats (full_sq, kitchen_sq, life_sq, floor, is_apartment, building_id, created_at, updated_at, offer_id, closed, rooms_total, image, resource_id)
+            """insert into flats (full_sq, kitchen_sq, life_sq, floor, is_apartment, building_id, created_at, updated_at, offer_id, closed, rooms_total, image, resource_id, flat_type)
                values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
                 flat['full_sq'],
                 flat['kitchen_sq'],
@@ -197,7 +197,8 @@ def save():
                 flat['closed'],
                 flat['rooms_count'],
                 flat['image'],
-                1
+                1,
+                flat['flat_type'] if 'flat_type' in flat else 'SECONDARY'
             ))
         cur.execute('select id from flats where offer_id=%s;', (flat['offer_id'],))
         flat_id = cur.fetchone()[0]
@@ -207,7 +208,7 @@ def save():
         print('flat already exist' + str(flat_id))
 
         cur.execute("""update flats
-                       set full_sq=%s, kitchen_sq=%s, life_sq=%s, floor=%s, is_apartment=%s, building_id=%s, updated_at=%s, closed=%s, rooms_total=%s, image=%s
+                       set full_sq=%s, kitchen_sq=%s, life_sq=%s, floor=%s, is_apartment=%s, building_id=%s, updated_at=%s, closed=%s, rooms_total=%s, image=%s, flat_type=%s
                        where id=%s""", (
             flat['full_sq'],
             flat['kitchen_sq'],
@@ -219,6 +220,7 @@ def save():
             flat['closed'],
             flat['rooms_count'],
             flat['image'],
+            flat['flat_type'] if 'flat_type' in flat else 'SECONDARY',
             flat_id
         ))
         print('updated' + str(flat_id))
