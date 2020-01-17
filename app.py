@@ -184,7 +184,7 @@ def save():
     if not is_offer_exist:
         cur.execute(
             """insert into flats (full_sq, kitchen_sq, life_sq, floor, is_apartment, building_id, created_at, updated_at, offer_id, closed, rooms_total, image, resource_id, flat_type)
-               values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
+               values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
                 flat['full_sq'],
                 flat['kitchen_sq'],
                 flat['life_sq'],
