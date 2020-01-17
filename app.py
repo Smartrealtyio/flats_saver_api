@@ -52,7 +52,7 @@ def closer():
 
 @app.route('/api/save/', methods=['POST'])
 def save():
-    print(request.json)
+    print(request.json, flush=True)
     flat = json.loads(request.json)
     for price in flat['prices']:
         date = price[0].split(' ')[0]
@@ -70,17 +70,17 @@ def save():
                                 password=SETTINGS.password)
         cur = conn.cursor()
     except:
-        print('fail connection')
+        print('fail connection', flush=True)
         return jsonify({'result': False})
 
     cur.execute("select id from districts where name=%s;", (flat['district'],))
     try:
         district_id = cur.fetchone()[0]
     except:
-        print('district does not exist')
+        print('district does not exist', flush=True)
         conn.close()
         return jsonify({'result': False})
-    print('district_id' + str(district_id))
+    print('district_id' + str(district_id), flush=True)
 
     metro_ids = {}
     for metro in flat['metros']:
@@ -129,7 +129,7 @@ def save():
         longitude = float(flat['longitude'])
         latitude = float(flat['latitude'])
     except IndexError:
-        print('bad address for yandex-api' + flat['address'])
+        print('bad address for yandex-api' + flat['address'], flush=True)
         conn.close()
         return jsonify({'result': False})
 
@@ -158,7 +158,7 @@ def save():
             ))
         cur.execute("select id from buildings where address=%s;", (flat['address'],))
         building_id = cur.fetchone()[0]
-        print('building_id' + str(building_id))
+        print('building_id' + str(building_id), flush=True)
         for metro, metro_id in metro_ids.items():
             try:
                 cur.execute(
@@ -177,7 +177,7 @@ def save():
                 return jsonify({'result': False})
     else:
         building_id = is_building_exist[0]
-        print('building already exist' + str(building_id))
+        print('building already exist' + str(building_id), flush=True)
 
     cur.execute('select * from flats where offer_id=%s', (flat['offer_id'],))
     is_offer_exist = cur.fetchone()
@@ -202,10 +202,10 @@ def save():
             ))
         cur.execute('select id from flats where offer_id=%s;', (flat['offer_id'],))
         flat_id = cur.fetchone()[0]
-        print('flat_id' + str(flat_id))
+        print('flat_id' + str(flat_id), flush=True)
     else:
         flat_id = is_offer_exist[0]
-        print('flat already exist' + str(flat_id))
+        print('flat already exist' + str(flat_id), flush=True)
 
         cur.execute("""update flats
                        set full_sq=%s, kitchen_sq=%s, life_sq=%s, floor=%s, is_apartment=%s, building_id=%s, updated_at=%s, closed=%s, rooms_total=%s, image=%s, flat_type=%s
@@ -223,7 +223,7 @@ def save():
             flat['flat_type'] if 'flat_type' in flat else 'SECONDARY',
             flat_id
         ))
-        print('updated' + str(flat_id))
+        print('updated' + str(flat_id), flush=True)
 
     for price_info in flat['prices']:
         cur.execute('select * from prices where changed_date=%s', (price_info[0],))
