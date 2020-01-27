@@ -78,8 +78,22 @@ def save():
         district_id = cur.fetchone()[0]
     except:
         print('district does not exist', flush=True)
-        conn.close()
-        return jsonify({'result': False})
+        cur.execute("""insert into districts
+                       (name, population, city_id, created_at, updated_at, prefix)
+                       values (%s, %s, %s, %s, %s, %s);""", (
+            flat['district'],
+            1,
+            flat['city_id'],
+            datetime.now(),
+            datetime.now(),
+            'prefix'
+        ))
+        cur.execute("select id from districts where name=%s;", (flat['district'],))
+        district_id = cur.fetchone()[0]
+        print('new district added', flush=True)
+
+        # conn.close()
+        # return jsonify({'result': False})
     print('district_id' + str(district_id), flush=True)
 
     metro_ids = {}
@@ -89,43 +103,28 @@ def save():
             metro_id = cur.fetchone()[0]
             metro_ids.update({metro: metro_id})
         except:
-            # logging.info('metro' + str(metro) + 'does not exist')
-            # try:
-            #     metro_location = 'Москва,метро '+ metro
-            #     coords_response = requests.get(
-            #         f'https://geocode-maps.yandex.ru/1.x/?apikey={self.yand_api_token}&format=json&geocode={metro_location}', timeout=5).text
-            #     coords = \
-            #     json.loads(coords_response)['response']['GeoObjectCollection']['featureMember'][0]['GeoObject'][
-            #         'Point']['pos']
-            #     longitude, latitude = coords.split(' ')
-            #     longitude = float(longitude)
-            #     latitude = float(latitude)
-            #
-            #     cur.execute("""insert into metros (longitude, latitude, city_id, created_at, updated_at, metro_id, name)
-            #                    values (%s, %s, %s, %s, %s, %s, %s)""", (
-            #         longitude,
-            #         latitude,
-            #         1,
-            #         datetime.now(),
-            #         datetime.now(),
-            #         0,
-            #         metro
-            #     ))
-            #     print('udated', metro)
-            # except:
-            # logging.info('fail in updating' + str(metro))
-            continue
+            metro_longitude = float(flat['metro_longitude'])
+            metro_latitude = float(flat['metro_latitude'])
+            if metro_longitude > 0 and metro_latitude > 0:
+                cur.execute("select count(*) from metros where city_id = %s;", (flat['city_id'],))
+                m_id = -1 - cur.fetchone()[0]
+                cur.execute("""insert into metros (longitude, latitude, city_id, created_at, updated_at, metro_id, name)
+                               values (%s, %s, %s, %s, %s, %s, %s)""", (
+                    metro_longitude,
+                    metro_latitude,
+                    flat['city_id'],
+                    datetime.now(),
+                    datetime.now(),
+                    m_id,
+                    metro
+                ))
+            print('new metro added', metro, flush=True)
+            cur.execute("select id from metros where name=%s;", (metro,))
+            metro_id = cur.fetchone()[0]
+            metro_ids.update({metro: metro_id})
+
 
     try:
-        # coords_response = requests.get(
-        #    'https://geocode-maps.yandex.ru/1.x/?apikey={}&format=json&geocode={}'.format(SETTINGS.yand_api_token,
-        #                                                                                  flat["address"]),
-        #    timeout=5).text
-        # coords = \
-        #    json.loads(coords_response)['response']['GeoObjectCollection']['featureMember'][0]['GeoObject'][
-        #        'Point'][
-        #        'pos']
-        # longitude, latitude = coords.split(' ')
         longitude = float(flat['longitude'])
         latitude = float(flat['latitude'])
     except IndexError:
