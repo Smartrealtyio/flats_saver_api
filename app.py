@@ -49,6 +49,27 @@ def closer():
 
     return jsonify({'result': True})
 
+@app.route('/api/deleting/', methods=['POST'])
+def deleter():
+    try:
+        conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user,
+                                password=SETTINGS.password)
+        cur = conn.cursor()
+    except:
+        print('fail connection')
+        return jsonify({'result': False})
+
+    offers = json.loads(request.json)
+    for offer in offers:
+        # cur.execute("select * from flats where offer_id = %s", (offer,))
+        # print(cur.fetchall())
+        cur.execute("delete from flats where offer_id = %s;", (offer,))
+
+    conn.commit()
+    cur.close()
+
+    return jsonify({'result': True})
+
 
 @app.route('/api/save/', methods=['POST'])
 def save():
