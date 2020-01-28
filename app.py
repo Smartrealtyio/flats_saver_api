@@ -179,7 +179,11 @@ def save():
         building_id = is_building_exist[0]
         print('building already exist' + str(building_id), flush=True)
         for metro, metro_id in metro_ids.items():
-            try:
+            cur.execute("select id from time_metro_buildings where building_id = %s, metro_id = %s;", (
+                building_id,
+                metro_id
+            ))
+            if not cur.fetchone():
                 cur.execute(
                     """insert into time_metro_buildings (building_id, metro_id, time_to_metro, transport_type, created_at, updated_at)
                        values (%s, %s, %s, %s, %s, %s);""", (
@@ -191,7 +195,7 @@ def save():
                         datetime.now()
                     ))
                 print('added new time_to_metro', flush=True)
-            except:
+            else:
                 print('time_to metro already exist', flush=True)
 
 
