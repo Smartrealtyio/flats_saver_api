@@ -102,6 +102,7 @@ def save():
             cur.execute("select id from metros where name=%s;", (metro,))
             metro_id = cur.fetchone()[0]
             metro_ids.update({metro: metro_id})
+            print('metro already exist', flush=True)
         except:
             metro_longitude = float(flat['metros'][metro]['metro_longitude'])
             metro_latitude = float(flat['metros'][metro]['metro_latitude'])
@@ -177,6 +178,22 @@ def save():
     else:
         building_id = is_building_exist[0]
         print('building already exist' + str(building_id), flush=True)
+        for metro, metro_id in metro_ids.items():
+            try:
+                cur.execute(
+                    """insert into time_metro_buildings (building_id, metro_id, time_to_metro, transport_type, created_at, updated_at)
+                       values (%s, %s, %s, %s, %s, %s);""", (
+                        building_id,
+                        metro_id,
+                        flat['metros'][metro]['time_to_metro'],
+                        flat['metros'][metro]['transport_type'],
+                        datetime.now(),
+                        datetime.now()
+                    ))
+                print('added new time_to_metro', flush=True)
+            except:
+                print('time_to metro already exist', flush=True)
+
 
     cur.execute('select * from flats where offer_id=%s', (flat['offer_id'],))
     is_offer_exist = cur.fetchone()
