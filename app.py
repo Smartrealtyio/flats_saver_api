@@ -103,8 +103,8 @@ def save():
             metro_id = cur.fetchone()[0]
             metro_ids.update({metro: metro_id})
         except:
-            metro_longitude = float(flat['metro_longitude'])
-            metro_latitude = float(flat['metro_latitude'])
+            metro_longitude = float(flat['metros'][metro]['metro_longitude'])
+            metro_latitude = float(flat['metros'][metro]['metro_latitude'])
             if metro_longitude > 0 and metro_latitude > 0:
                 cur.execute("select count(*) from metros where city_id = %s;", (flat['city_id'],))
                 m_id = -1 - cur.fetchone()[0]
