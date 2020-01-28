@@ -179,7 +179,7 @@ def save():
         building_id = is_building_exist[0]
         print('building already exist' + str(building_id), flush=True)
         for metro, metro_id in metro_ids.items():
-            cur.execute("select id from time_metro_buildings where building_id = %s, metro_id = %s;", (
+            cur.execute("select id from time_metro_buildings where building_id = %s and metro_id = %s;", (
                 building_id,
                 metro_id
             ))
