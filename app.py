@@ -267,7 +267,7 @@ def save():
         print('updated' + str(flat_id), flush=True)
 
     for price_info in flat['prices']:
-        cur.execute('select * from prices where changed_date=%s', (price_info[0],))
+        cur.execute('select * from prices where changed_date=%s and flat_id=%s', (price_info[0], flat_id,))
         is_price_exist = cur.fetchone()
         if not is_price_exist:
             cur.execute("""insert into prices (price, changed_date, flat_id, created_at, updated_at)
