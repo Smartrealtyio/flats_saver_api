@@ -269,11 +269,11 @@ def save():
             flat['rooms_count'],
             flat['image'],
             flat['flat_type'] if 'flat_type' in flat else 'SECONDARY',
-            flat_id,
             flat['is_rented'],
             flat['rent_quarter'],
             flat['rent_year'],
-            flat['agency']
+            flat['agency'],
+            flat_id
         ))
         print('updated' + str(flat_id), flush=True)
 
