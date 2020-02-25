@@ -49,6 +49,7 @@ def closer():
 
     return jsonify({'result': True})
 
+
 @app.route('/api/deleting/', methods=['POST'])
 def deleter():
     try:
@@ -145,7 +146,6 @@ def save():
             metro_id = cur.fetchone()[0]
             metro_ids.update({metro: metro_id})
 
-
     try:
         longitude = float(flat['longitude'])
         latitude = float(flat['latitude'])
@@ -219,13 +219,14 @@ def save():
             else:
                 print('time_to metro already exist', flush=True)
 
-
     cur.execute('select * from flats where offer_id=%s', (flat['offer_id'],))
     is_offer_exist = cur.fetchone()
     if not is_offer_exist:
         cur.execute(
-            """insert into flats (full_sq, kitchen_sq, life_sq, floor, is_apartment, building_id, created_at, updated_at, offer_id, closed, rooms_total, image, resource_id, flat_type)
-               values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
+            """insert into flats (full_sq, kitchen_sq, life_sq, floor, is_apartment, building_id, created_at, 
+                           updated_at, offer_id, closed, rooms_total, image, resource_id, flat_type,
+                           is_rented, rent_quarter, rent_year, agency)
+               values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
                 flat['full_sq'],
                 flat['kitchen_sq'],
                 flat['life_sq'],
@@ -239,7 +240,11 @@ def save():
                 flat['rooms_count'],
                 flat['image'],
                 1,
-                flat['flat_type'] if 'flat_type' in flat else 'SECONDARY'
+                flat['flat_type'] if 'flat_type' in flat else 'SECONDARY',
+                flat['is_rented'],
+                flat['rent_quarter'],
+                flat['rent_year'],
+                flat['agency']
             ))
         cur.execute('select id from flats where offer_id=%s;', (flat['offer_id'],))
         flat_id = cur.fetchone()[0]
@@ -249,7 +254,9 @@ def save():
         print('flat already exist' + str(flat_id), flush=True)
 
         cur.execute("""update flats
-                       set full_sq=%s, kitchen_sq=%s, life_sq=%s, floor=%s, is_apartment=%s, building_id=%s, updated_at=%s, closed=%s, rooms_total=%s, image=%s, flat_type=%s
+                       set full_sq=%s, kitchen_sq=%s, life_sq=%s, floor=%s, is_apartment=%s, building_id=%s, 
+                       updated_at=%s, closed=%s, rooms_total=%s, image=%s, flat_type=%s, is_rented=%s, rent_quarter=%s,
+                       rent_year=%s, agency=%s
                        where id=%s""", (
             flat['full_sq'],
             flat['kitchen_sq'],
@@ -262,7 +269,11 @@ def save():
             flat['rooms_count'],
             flat['image'],
             flat['flat_type'] if 'flat_type' in flat else 'SECONDARY',
-            flat_id
+            flat_id,
+            flat['is_rented'],
+            flat['rent_quarter'],
+            flat['rent_year'],
+            flat['agency']
         ))
         print('updated' + str(flat_id), flush=True)
 
