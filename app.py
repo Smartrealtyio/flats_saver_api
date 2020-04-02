@@ -225,8 +225,8 @@ def save():
         cur.execute(
             """insert into flats (full_sq, kitchen_sq, life_sq, floor, is_apartment, building_id, created_at, 
                            updated_at, offer_id, closed, rooms_total, image, resource_id, flat_type,
-                           is_rented, rent_quarter, rent_year, agency)
-               values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
+                           is_rented, rent_quarter, rent_year, agency, renovation_type, windows_view)
+               values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
                 flat['full_sq'],
                 flat['kitchen_sq'],
                 flat['life_sq'],
@@ -244,7 +244,9 @@ def save():
                 flat['is_rented'],
                 flat['rent_quarter'],
                 flat['rent_year'],
-                flat['agency']
+                flat['agency'],
+                None, # temporarily
+                None  # temporarily
             ))
         cur.execute('select id from flats where offer_id=%s;', (flat['offer_id'],))
         flat_id = cur.fetchone()[0]
@@ -256,7 +258,7 @@ def save():
         cur.execute("""update flats
                        set full_sq=%s, kitchen_sq=%s, life_sq=%s, floor=%s, is_apartment=%s, building_id=%s, 
                        updated_at=%s, closed=%s, rooms_total=%s, image=%s, flat_type=%s, is_rented=%s, rent_quarter=%s,
-                       rent_year=%s, agency=%s
+                       rent_year=%s, agency=%s, renovation_type=%s, windows_view=%s
                        where id=%s""", (
             flat['full_sq'],
             flat['kitchen_sq'],
@@ -273,7 +275,9 @@ def save():
             flat['rent_quarter'],
             flat['rent_year'],
             flat['agency'],
-            flat_id
+            flat_id,
+            None, # temporarily
+            None  # temporarily
         ))
         print('updated' + str(flat_id), flush=True)
 
