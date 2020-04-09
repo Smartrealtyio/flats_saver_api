@@ -245,8 +245,8 @@ def save():
                 flat['rent_quarter'],
                 flat['rent_year'],
                 flat['agency'],
-                None, # temporarily
-                None  # temporarily
+                flat['renovation_type'],
+                flat['windows_view']
             ))
         cur.execute('select id from flats where offer_id=%s;', (flat['offer_id'],))
         flat_id = cur.fetchone()[0]
@@ -276,8 +276,8 @@ def save():
             flat['rent_year'],
             flat['agency'],
             flat_id,
-            None, # temporarily
-            None  # temporarily
+            flat['renovation_type'],
+            flat['windows_view']
         ))
         print('updated' + str(flat_id), flush=True)
 
