@@ -275,9 +275,9 @@ def save():
             flat['rent_quarter'],
             flat['rent_year'],
             flat['agency'],
-            flat_id,
             flat['renovation_type'],
-            flat['windows_view']
+            flat['windows_view'],
+            flat_id
         ))
         print('updated' + str(flat_id), flush=True)
 
