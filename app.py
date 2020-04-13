@@ -121,7 +121,7 @@ def save():
     metro_ids = {}
     for metro in flat['metros']:
         try:
-            cur.execute("select id from metros where name=%s;", (metro,))
+            cur.execute("select id from metros where name=%s and city_id=%s;", (metro, flat['city_id']))
             metro_id = cur.fetchone()[0]
             metro_ids.update({metro: metro_id})
             print('metro already exist', flush=True)
