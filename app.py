@@ -1,10 +1,7 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import psycopg2
 import settings_local as SETTINGS
-from joblib import dump, load
-import math
-from datetime import datetime
-import requests
+from datetime import datetime, date
 import json
 
 app = Flask(__name__)
@@ -37,15 +34,12 @@ def closer():
 
     offers = json.loads(request.json)
     for offer in offers:
-        # cur.execute("select * from flats where offer_id = %s", (offer,))
-        # print(cur.fetchall())
-        cur.execute("update flats set closed = 't', updated_at = %s where offer_id = %s;", (datetime.now(), offer,))
-        cur.execute("select id from flats where offer_id = %s;", (offer,))
-        id = cur.fetchone()[0]
-        cur.execute("update prices set updated_at = %s where flat_id = %s;", (datetime.now(), id))
+        cur.execute("update flats set closed = 't', close_date = %s where offer_id = %s;", (date.today(), offer,))
 
     conn.commit()
     cur.close()
+
+    print('\nCLOSED\n', flush=True)
 
     return jsonify({'result': True})
 
